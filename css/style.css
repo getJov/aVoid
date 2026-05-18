@@ -88,6 +88,8 @@ body::after {
     z-index: 0;
     width: 100vw;
     height: 100vh;
+    max-height: none;
+    aspect-ratio: auto;
     pointer-events: none;
 }
 
@@ -267,9 +269,10 @@ h2 {
     text-transform: uppercase;
 }
 
-canvas {
+#board {
     display: block;
     width: 100%;
+    height: auto;
     aspect-ratio: 900 / 320;
     max-height: 68vh;
     touch-action: manipulation;
@@ -308,6 +311,7 @@ canvas {
 .controls-row {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
     margin-top: 14px;
 }
@@ -336,6 +340,7 @@ canvas {
 }
 
 .avatar-card img {
+    flex: 0 0 auto;
     width: 64px;
     height: 64px;
     border: 2px solid var(--cyan);
@@ -343,6 +348,7 @@ canvas {
     background: #05080d;
     box-shadow: 0 0 24px rgba(41, 227, 255, 0.22);
     object-fit: cover;
+    aspect-ratio: 1;
 }
 
 .avatar-card p,
@@ -368,6 +374,7 @@ canvas {
 
 .field input {
     min-width: 0;
+    width: 100%;
     min-height: 42px;
     border: 1px solid rgba(143, 163, 184, 0.26);
     border-radius: 8px;
@@ -420,10 +427,34 @@ canvas {
 
     .scoreboard {
         min-width: 0;
+        width: 100%;
     }
 
     #gameHint {
         margin-left: 0;
+    }
+}
+
+@media (max-width: 720px) {
+    .app-shell {
+        gap: 12px;
+    }
+
+    .game-header {
+        gap: 12px;
+    }
+
+    .scoreboard {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .scoreboard span {
+        min-width: 0;
+        padding: 9px;
+    }
+
+    .system-strip {
+        font-size: 0.66rem;
     }
 }
 
@@ -442,13 +473,54 @@ canvas {
         grid-template-columns: 1fr;
     }
 
+    .scoreboard strong {
+        font-size: 1.15rem;
+    }
+
+    .avatar-card {
+        grid-template-columns: 58px minmax(0, 1fr);
+    }
+
+    .avatar-card img {
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+    }
+
     .system-strip {
         position: relative;
         flex-direction: column;
         gap: 2px;
     }
 
-    canvas {
-        min-height: 210px;
+    #board {
+        max-height: none;
+    }
+}
+
+@media (max-width: 380px) {
+    .app-shell {
+        padding: 8px;
+    }
+
+    .game-panel,
+    .settings-panel {
+        padding: 10px;
+    }
+
+    button {
+        width: 100%;
+        padding: 0 12px;
+    }
+
+    .avatar-card {
+        grid-template-columns: 52px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .avatar-card img {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
     }
 }
