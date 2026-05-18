@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>aVoid</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="icons/aIcon.ico">
+</head>
+<body>
+    <main class="app-shell">
+        <section class="game-panel" aria-label="aVoid game">
+            <header class="game-header">
+                <div>
+                    <p class="eyebrow">arcade runner</p>
+                    <h1>aVoid</h1>
+                </div>
+                <div class="scoreboard" aria-live="polite">
+                    <span>Score <strong id="scoreValue">0</strong></span>
+                    <span>Best <strong id="bestValue">0</strong></span>
+                </div>
+            </header>
+
+            <div class="canvas-wrap">
+                <canvas id="board" width="900" height="320" aria-label="aVoid runner game board"></canvas>
+                <div id="statusOverlay" class="status-overlay">
+                    <strong id="statusTitle">Ready</strong>
+                    <span id="statusText">Press start, space, or tap the board.</span>
+                </div>
+            </div>
+
+            <div class="controls-row">
+                <button id="startButton" type="button">Start</button>
+                <button id="restartButton" type="button">Restart</button>
+                <p id="gameHint">Jump with Space, Arrow Up, W, tap, or click.</p>
+            </div>
+        </section>
+
+        <aside class="settings-panel" aria-label="Player settings">
+            <div class="avatar-card">
+                <img id="avatarPreview" src="icons/A.png" alt="Current player avatar">
+                <div>
+                    <h2>Player Icon</h2>
+                    <p>Use the default aVoid icon or upload your own image.</p>
+                </div>
+            </div>
+
+            <label class="field">
+                <span>Upload avatar</span>
+                <input id="avatarUpload" type="file" accept="image/*">
+            </label>
+
+            <label class="field">
+                <span>Image URL <small>best effort</small></span>
+                <input id="avatarUrl" type="url" placeholder="https://example.com/avatar.png" autocomplete="off">
+            </label>
+
+            <div class="avatar-actions">
+                <button id="applyAvatarUrl" type="button">Use URL</button>
+                <button id="resetAvatar" type="button">Use Default</button>
+            </div>
+
+            <p id="avatarMessage" class="message" aria-live="polite">Default icon active.</p>
+        </aside>
+    </main>
+
+    <img id="defaultPlayerIcon" class="asset-preload" src="icons/A.png" alt="">
+    <img id="obstacleSheet" class="asset-preload" src="icons/avoid-obstacles.png" alt="">
+
+    <script src="js/script.js"></script>
+</body>
+</html>
