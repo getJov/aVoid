@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Call of Duty Mobile obstacle">
+  <defs>
+    <linearGradient id="a" x1="21" y1="18" x2="107" y2="110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2a2f39"/>
+      <stop offset="1" stop-color="#07090d"/>
+    </linearGradient>
+  </defs>
+  <rect x="12" y="18" width="104" height="92" rx="22" fill="url(#a)"/>
+  <path fill="#F5B51B" d="M27 39h74l-8 45-29 19-29-19-8-45Z"/>
+  <path fill="#101318" d="M38 49h52l-5.3 29.2L64 92 43.3 78.2 38 49Z"/>
+  <path fill="#F5B51B" d="M52 59h24v8H52zm3 14h18v8H55z"/>
+  <path fill="#fff" d="M31 26h66v7H31z"/>
+</svg>

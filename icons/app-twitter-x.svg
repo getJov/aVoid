@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="X obstacle">
+  <circle cx="64" cy="64" r="56" fill="#000"/>
+  <path fill="#fff" d="M74.2 58.1 106 21H94.7L69.2 50.7 48.8 21H23.3l33.4 48.6L23.3 108h11.4l27.1-31.5L83.5 108h25.2L74.2 58.1Zm-9.6 11.2-3.1-4.5-27-35.2h9l20.1 26.3 3.1 4.5 28.5 37.1h-9L64.6 69.3Z"/>
+</svg>

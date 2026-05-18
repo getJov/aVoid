@@ -1,5 +1,7 @@
 const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
+const backgroundCanvas = document.getElementById("voidField");
+const backgroundCtx = backgroundCanvas.getContext("2d");
 
 const scoreValue = document.getElementById("scoreValue");
 const bestValue = document.getElementById("bestValue");
@@ -15,23 +17,46 @@ const applyAvatarUrl = document.getElementById("applyAvatarUrl");
 const resetAvatar = document.getElementById("resetAvatar");
 const avatarMessage = document.getElementById("avatarMessage");
 const defaultPlayerIcon = document.getElementById("defaultPlayerIcon");
-const obstacleSheet = document.getElementById("obstacleSheet");
+const obstacleIcons = [
+    document.getElementById("appCodm"),
+    document.getElementById("appFacebook"),
+    document.getElementById("appInstagram"),
+    document.getElementById("appMobileLegends"),
+    document.getElementById("appMessenger"),
+    document.getElementById("appTiktok"),
+    document.getElementById("appTelegram"),
+    document.getElementById("appTwitterX"),
+    document.getElementById("appYoutube"),
+    document.getElementById("appChrome"),
+];
+
+const theme = {
+    voidTop: "#030712",
+    voidMid: "#07111c",
+    voidBottom: "#0c0618",
+    cyan: "#29e3ff",
+    green: "#6dff9d",
+    amber: "#f7c35f",
+    danger: "#ff4f6d",
+    panel: "#0b1017",
+    line: "rgba(41, 227, 255, 0.34)",
+};
 
 const groundY = 248;
 const playerSize = 52;
 const maxDelta = 32;
-const obstacleFrames = [
-    { sx: 0, sy: 0 },
-    { sx: 96, sy: 0 },
-    { sx: 192, sy: 0 },
-    { sx: 288, sy: 0 },
-    { sx: 384, sy: 0 },
-    { sx: 480, sy: 0 },
-];
 
 let animationFrame = null;
+let backgroundFrame = null;
 let lastTime = 0;
 let avatarObjectUrl = "";
+
+const pointer = {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
+    targetX: window.innerWidth / 2,
+    targetY: window.innerHeight / 2,
+};
 
 const state = {
     running: false,
@@ -67,7 +92,7 @@ function resetGame() {
     state.player.vy = 0;
     state.player.grounded = true;
     updateScore();
-    setOverlay("Ready", "Press start, space, or tap the board.", false);
+    setOverlay("aVoid.exe", "Press start, space, or tap to resist the void.", false);
     draw();
 }
 
@@ -142,14 +167,14 @@ function updateObstacles(delta, dt) {
 }
 
 function spawnObstacle() {
-    const frame = obstacleFrames[Math.floor(Math.random() * obstacleFrames.length)];
+    const image = obstacleIcons[Math.floor(Math.random() * obstacleIcons.length)];
     const size = 48 + Math.floor(Math.random() * 14);
     state.obstacles.push({
         x: canvas.width + 24,
         y: groundY - size,
         width: size,
         height: size,
-        frame,
+        image,
     });
 }
 
@@ -177,7 +202,7 @@ function endGame() {
         bestValue.textContent = String(state.best);
     }
 
-    setOverlay("Game Over", "Restart or jump to run again.", false);
+    setOverlay("VOID CONTACT", "Restart or jump to resist again.", false);
 }
 
 function draw() {
@@ -189,55 +214,108 @@ function draw() {
 
 function drawBackground() {
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, "#edf6fb");
-    gradient.addColorStop(1, "#cfdce3");
+    gradient.addColorStop(0, theme.voidTop);
+    gradient.addColorStop(0.58, theme.voidMid);
+    gradient.addColorStop(1, theme.voidBottom);
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "rgba(22, 196, 220, 0.18)";
-    ctx.fillRect(0, 60, canvas.width, 3);
-    ctx.fillStyle = "rgba(255, 190, 73, 0.18)";
-    ctx.fillRect(0, 92, canvas.width, 2);
+    const pulse = Math.sin(state.score / 8) * 0.04 + 0.12;
+    const voidGlow = ctx.createRadialGradient(650, 154, 30, 650, 154, 420);
+    voidGlow.addColorStop(0, `rgba(139, 109, 255, ${pulse})`);
+    voidGlow.addColorStop(0.48, "rgba(41, 227, 255, 0.08)");
+    voidGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = voidGlow;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(41, 227, 255, 0.08)";
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= canvas.width; x += 45) {
+        ctx.beginPath();
+        ctx.moveTo(x, 42);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+    for (let y = 52; y <= canvas.height; y += 32) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    ctx.fillStyle = "rgba(109, 255, 157, 0.86)";
+    ctx.font = "700 13px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.fillText("FOCUS SIGNAL", 22, 62);
+    ctx.fillStyle = "rgba(247, 195, 95, 0.86)";
+    ctx.fillText("DISTRACTION INBOUND", canvas.width - 186, 62);
 }
 
 function drawGround() {
-    ctx.strokeStyle = "#222832";
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = theme.cyan;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(0, groundY + 1);
     ctx.lineTo(canvas.width, groundY + 1);
     ctx.stroke();
 
-    ctx.fillStyle = "rgba(34, 40, 50, 0.16)";
-    for (let x = -40; x < canvas.width; x += 42) {
-        ctx.fillRect(x, groundY + 14, 24, 3);
+    ctx.save();
+    ctx.strokeStyle = "rgba(41, 227, 255, 0.18)";
+    ctx.lineWidth = 1;
+    for (let x = -120; x < canvas.width + 120; x += 42) {
+        ctx.beginPath();
+        ctx.moveTo(x, groundY + 1);
+        ctx.lineTo(x + 78, canvas.height);
+        ctx.stroke();
     }
+    for (let y = groundY + 18; y < canvas.height; y += 18) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+    ctx.restore();
 }
 
 function drawPlayer() {
     const { x, y, width, height, image } = state.player;
     ctx.save();
+    ctx.shadowColor = "rgba(41, 227, 255, 0.6)";
+    ctx.shadowBlur = 18;
     roundedImage(image, x, y, width, height, 12);
-    ctx.strokeStyle = "#16c4dc";
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = theme.green;
     ctx.lineWidth = 3;
     roundRect(x - 2, y - 2, width + 4, height + 4, 14);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(41, 227, 255, 0.32)";
+    ctx.lineWidth = 1;
+    roundRect(x - 7, y - 7, width + 14, height + 14, 18);
     ctx.stroke();
     ctx.restore();
 }
 
 function drawObstacles() {
     state.obstacles.forEach((obstacle) => {
-        ctx.drawImage(
-            obstacleSheet,
-            obstacle.frame.sx,
-            obstacle.frame.sy,
-            96,
-            96,
-            obstacle.x,
-            obstacle.y,
-            obstacle.width,
-            obstacle.height
-        );
+        ctx.save();
+        ctx.shadowColor = "rgba(255, 79, 109, 0.45)";
+        ctx.shadowBlur = 14;
+        ctx.strokeStyle = "rgba(255, 79, 109, 0.72)";
+        ctx.lineWidth = 2;
+        roundRect(obstacle.x - 5, obstacle.y - 5, obstacle.width + 10, obstacle.height + 10, 14);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        if (obstacle.image.complete && obstacle.image.naturalWidth !== 0) {
+            ctx.drawImage(obstacle.image, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        } else {
+            ctx.fillStyle = theme.panel;
+            roundRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height, 10);
+            ctx.fill();
+        }
+
+        ctx.restore();
     });
 }
 
@@ -292,6 +370,95 @@ function intersects(a, b) {
         a.y < b.y + b.height &&
         a.y + a.height > b.y
     );
+}
+
+function resizeBackgroundCanvas() {
+    const ratio = window.devicePixelRatio || 1;
+    backgroundCanvas.width = Math.floor(window.innerWidth * ratio);
+    backgroundCanvas.height = Math.floor(window.innerHeight * ratio);
+    backgroundCanvas.style.width = `${window.innerWidth}px`;
+    backgroundCanvas.style.height = `${window.innerHeight}px`;
+    backgroundCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+
+function bendPoint(x, y, strength = 1) {
+    const dx = x - pointer.x;
+    const dy = y - pointer.y;
+    const distance = Math.hypot(dx, dy) || 1;
+    const radius = 260;
+
+    if (distance > radius) return { x, y };
+
+    const falloff = (1 - distance / radius) ** 2;
+    const pull = 72 * falloff * strength;
+    const swirl = 34 * falloff * strength;
+    const nx = dx / distance;
+    const ny = dy / distance;
+
+    return {
+        x: x - nx * pull + -ny * swirl,
+        y: y - ny * pull + nx * swirl,
+    };
+}
+
+function drawBentLine(points, alpha) {
+    backgroundCtx.beginPath();
+    points.forEach((point, index) => {
+        if (index === 0) {
+            backgroundCtx.moveTo(point.x, point.y);
+        } else {
+            backgroundCtx.lineTo(point.x, point.y);
+        }
+    });
+    backgroundCtx.strokeStyle = `rgba(41, 227, 255, ${alpha})`;
+    backgroundCtx.stroke();
+}
+
+function drawVoidField() {
+    pointer.x += (pointer.targetX - pointer.x) * 0.14;
+    pointer.y += (pointer.targetY - pointer.y) * 0.14;
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const spacing = 42;
+    const segment = 14;
+
+    backgroundCtx.clearRect(0, 0, width, height);
+
+    const baseGlow = backgroundCtx.createRadialGradient(
+        pointer.x,
+        pointer.y,
+        0,
+        pointer.x,
+        pointer.y,
+        420
+    );
+    baseGlow.addColorStop(0, "rgba(0, 0, 0, 0.78)");
+    baseGlow.addColorStop(0.12, "rgba(1, 3, 8, 0.62)");
+    baseGlow.addColorStop(0.34, "rgba(41, 227, 255, 0.07)");
+    baseGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
+    backgroundCtx.fillStyle = baseGlow;
+    backgroundCtx.fillRect(0, 0, width, height);
+
+    backgroundCtx.lineWidth = 1;
+
+    for (let y = -spacing; y <= height + spacing; y += spacing) {
+        const points = [];
+        for (let x = -spacing; x <= width + spacing; x += segment) {
+            points.push(bendPoint(x, y, 1));
+        }
+        drawBentLine(points, 0.075);
+    }
+
+    for (let x = -spacing; x <= width + spacing; x += spacing) {
+        const points = [];
+        for (let y = -spacing; y <= height + spacing; y += segment) {
+            points.push(bendPoint(x, y, 0.92));
+        }
+        drawBentLine(points, 0.068);
+    }
+
+    backgroundFrame = requestAnimationFrame(drawVoidField);
 }
 
 function updateScore() {
@@ -372,6 +539,20 @@ startButton.addEventListener("click", startGame);
 restartButton.addEventListener("click", restartGame);
 canvas.addEventListener("pointerdown", jump);
 
+document.addEventListener("pointermove", (event) => {
+    const pullX = event.clientX + (window.innerWidth / 2 - event.clientX) * 0.08;
+    const pullY = event.clientY + (window.innerHeight / 2 - event.clientY) * 0.08;
+
+    pointer.targetX = event.clientX;
+    pointer.targetY = event.clientY;
+    document.body.style.setProperty("--cursor-x", `${event.clientX}px`);
+    document.body.style.setProperty("--cursor-y", `${event.clientY}px`);
+    document.body.style.setProperty("--cursor-pull-x", `${pullX}px`);
+    document.body.style.setProperty("--cursor-pull-y", `${pullY}px`);
+});
+
+window.addEventListener("resize", resizeBackgroundCanvas);
+
 document.addEventListener("keydown", (event) => {
     const jumpKeys = ["Space", "ArrowUp", "KeyW"];
     if (!jumpKeys.includes(event.code)) return;
@@ -380,4 +561,9 @@ document.addEventListener("keydown", (event) => {
     jump();
 });
 
-window.addEventListener("load", resetGame);
+window.addEventListener("load", () => {
+    resizeBackgroundCanvas();
+    cancelAnimationFrame(backgroundFrame);
+    backgroundFrame = requestAnimationFrame(drawVoidField);
+    resetGame();
+});

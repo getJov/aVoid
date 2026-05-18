@@ -10,20 +10,27 @@
     <link rel="icon" href="icons/aIcon.ico">
 </head>
 <body>
+    <canvas id="voidField" class="void-field" aria-hidden="true"></canvas>
+
     <main class="app-shell">
         <section class="game-panel" aria-label="aVoid game">
             <header class="game-header">
                 <div>
-                    <p class="eyebrow">arcade runner</p>
+                    <p class="eyebrow">VOID SESSION ACTIVE</p>
                     <h1>aVoid</h1>
                 </div>
                 <div class="scoreboard" aria-live="polite">
-                    <span>Score <strong id="scoreValue">0</strong></span>
-                    <span>Best <strong id="bestValue">0</strong></span>
+                    <span>Focus Signal <strong id="scoreValue">0</strong></span>
+                    <span>Best Run <strong id="bestValue">0</strong></span>
                 </div>
             </header>
 
             <div class="canvas-wrap">
+                <div class="system-strip" aria-hidden="true">
+                    <span>aVoid.exe</span>
+                    <span>DISTRACTION INBOUND</span>
+                    <span>VOID DEPTH: STABLE</span>
+                </div>
                 <canvas id="board" width="900" height="320" aria-label="aVoid runner game board"></canvas>
                 <div id="statusOverlay" class="status-overlay">
                     <strong id="statusTitle">Ready</strong>
@@ -32,8 +39,8 @@
             </div>
 
             <div class="controls-row">
-                <button id="startButton" type="button">Start</button>
-                <button id="restartButton" type="button">Restart</button>
+                <button id="startButton" type="button">Start Session</button>
+                <button id="restartButton" type="button">Reboot Run</button>
                 <p id="gameHint">Jump with Space, Arrow Up, W, tap, or click.</p>
             </div>
         </section>
@@ -42,7 +49,7 @@
             <div class="avatar-card">
                 <img id="avatarPreview" src="icons/A.png" alt="Current player avatar">
                 <div>
-                    <h2>Player Icon</h2>
+                    <h2>Player Signal</h2>
                     <p>Use the default aVoid icon or upload your own image.</p>
                 </div>
             </div>
@@ -67,7 +74,16 @@
     </main>
 
     <img id="defaultPlayerIcon" class="asset-preload" src="icons/A.png" alt="">
-    <img id="obstacleSheet" class="asset-preload" src="icons/avoid-obstacles.png" alt="">
+    <img id="appCodm" class="asset-preload" src="icons/app-codm.svg" alt="">
+    <img id="appFacebook" class="asset-preload" src="icons/app-facebook.svg" alt="">
+    <img id="appInstagram" class="asset-preload" src="icons/app-instagram.svg" alt="">
+    <img id="appMobileLegends" class="asset-preload" src="icons/app-mobile-legends.svg" alt="">
+    <img id="appMessenger" class="asset-preload" src="icons/app-messenger.svg" alt="">
+    <img id="appTiktok" class="asset-preload" src="icons/app-tiktok.svg" alt="">
+    <img id="appTelegram" class="asset-preload" src="icons/app-telegram.svg" alt="">
+    <img id="appTwitterX" class="asset-preload" src="icons/app-twitter-x.svg" alt="">
+    <img id="appYoutube" class="asset-preload" src="icons/app-youtube.svg" alt="">
+    <img id="appChrome" class="asset-preload" src="icons/app-chrome.svg" alt="">
 
     <script src="js/script.js"></script>
 </body>

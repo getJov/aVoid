@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Chrome obstacle">
+  <circle cx="64" cy="64" r="56" fill="#fff"/>
+  <path fill="#EA4335" d="M64 8h48.5A56 56 0 0 1 116 64H64L41.6 25.2A55.7 55.7 0 0 1 64 8Z"/>
+  <path fill="#FBBC04" d="M112.5 36A56 56 0 0 1 64 120L88.2 78A28 28 0 0 0 64 36h48.5Z"/>
+  <path fill="#34A853" d="M64 120A56 56 0 0 1 15.5 36h48.6L88.2 78 64 120Z"/>
+  <circle cx="64" cy="64" r="28" fill="#fff"/>
+  <circle cx="64" cy="64" r="20" fill="#4285F4"/>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Mobile Legends obstacle">
+  <defs>
+    <linearGradient id="a" x1="18" y1="18" x2="110" y2="110" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#265CFF"/>
+      <stop offset=".5" stop-color="#16D1FF"/>
+      <stop offset="1" stop-color="#F6C84F"/>
+    </linearGradient>
+    <linearGradient id="b" x1="24" y1="28" x2="102" y2="105" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#182555"/>
+      <stop offset="1" stop-color="#071025"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#b)" d="M64 10 111 32v49l-47 37-47-37V32L64 10Z"/>
+  <path fill="url(#a)" d="M30 84 40 36l24 31 24-31 10 48-17 16-4-27-13 18-13-18-4 27-17-16Z"/>
+  <path fill="#F6C84F" d="m45 98 19 12 19-12H45Z"/>
+  <path fill="#fff" opacity=".9" d="M64 25 76 41 64 58 52 41 64 25Z"/>
+</svg>
