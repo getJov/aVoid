@@ -225,7 +225,7 @@ function resetGame() {
     state.player.vy = 0;
     state.player.grounded = true;
     updateScore();
-    setOverlay("aVoid.exe", "Press start, space, or tap to resist the void.", false);
+    setOverlay("a-void.exe", "Press start, space, or tap to resist the void.", false);
     draw();
 }
 
