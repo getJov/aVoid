@@ -10,6 +10,7 @@ const statusTitle = document.getElementById("statusTitle");
 const statusText = document.getElementById("statusText");
 const startButton = document.getElementById("startButton");
 const restartButton = document.getElementById("restartButton");
+const soundButton = document.getElementById("soundButton");
 const avatarPreview = document.getElementById("avatarPreview");
 const avatarUpload = document.getElementById("avatarUpload");
 const avatarUrl = document.getElementById("avatarUrl");
@@ -50,6 +51,14 @@ let animationFrame = null;
 let backgroundFrame = null;
 let lastTime = 0;
 let avatarObjectUrl = "";
+let audioContext = null;
+let ambienceGain = null;
+let ambienceOscillators = [];
+
+const audioState = {
+    muted: localStorage.getItem("avoidMuted") === "true",
+    ambienceRunning: false,
+};
 
 const pointer = {
     x: window.innerWidth / 2,
@@ -79,6 +88,130 @@ const state = {
 };
 
 bestValue.textContent = String(state.best);
+syncSoundButton();
+
+function createAudioContext() {
+    if (!audioContext) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return null;
+
+        audioContext = new AudioContextClass();
+    }
+
+    if (audioContext.state === "suspended") audioContext.resume();
+    return audioContext;
+}
+
+function syncSoundButton() {
+    soundButton.textContent = audioState.muted ? "Sound Off" : "Sound On";
+    soundButton.setAttribute("aria-pressed", String(!audioState.muted));
+}
+
+function setMuted(muted) {
+    audioState.muted = muted;
+    localStorage.setItem("avoidMuted", String(muted));
+    syncSoundButton();
+
+    if (muted) {
+        stopAmbience();
+    } else if (state.running) {
+        startAmbience();
+    }
+}
+
+function startAmbience() {
+    if (audioState.muted || audioState.ambienceRunning) return;
+
+    const audio = createAudioContext();
+    if (!audio) return;
+
+    ambienceGain = audio.createGain();
+    ambienceGain.gain.setValueAtTime(0.0001, audio.currentTime);
+    ambienceGain.gain.exponentialRampToValueAtTime(0.035, audio.currentTime + 0.6);
+    ambienceGain.connect(audio.destination);
+
+    ambienceOscillators = [55, 82.5].map((frequency, index) => {
+        const oscillator = audio.createOscillator();
+        const filter = audio.createBiquadFilter();
+        const gain = audio.createGain();
+
+        oscillator.type = index === 0 ? "sine" : "triangle";
+        oscillator.frequency.setValueAtTime(frequency, audio.currentTime);
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(index === 0 ? 260 : 180, audio.currentTime);
+        gain.gain.setValueAtTime(index === 0 ? 0.7 : 0.22, audio.currentTime);
+
+        oscillator.connect(filter);
+        filter.connect(gain);
+        gain.connect(ambienceGain);
+        oscillator.start();
+
+        return oscillator;
+    });
+
+    audioState.ambienceRunning = true;
+}
+
+function stopAmbience() {
+    if (!audioState.ambienceRunning || !audioContext) return;
+
+    const stopAt = audioContext.currentTime + 0.18;
+    if (ambienceGain) {
+        ambienceGain.gain.cancelScheduledValues(audioContext.currentTime);
+        ambienceGain.gain.setTargetAtTime(0.0001, audioContext.currentTime, 0.06);
+    }
+
+    ambienceOscillators.forEach((oscillator) => {
+        oscillator.stop(stopAt);
+    });
+
+    ambienceOscillators = [];
+    ambienceGain = null;
+    audioState.ambienceRunning = false;
+}
+
+function playTone({ frequency, endFrequency, duration, type, volume }) {
+    if (audioState.muted) return;
+
+    const audio = createAudioContext();
+    if (!audio) return;
+
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+    const now = audio.currentTime;
+
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, now);
+    oscillator.frequency.exponentialRampToValueAtTime(endFrequency, now + duration);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(volume, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    oscillator.connect(gain);
+    gain.connect(audio.destination);
+    oscillator.start(now);
+    oscillator.stop(now + duration + 0.03);
+}
+
+function playJumpSound() {
+    playTone({
+        frequency: 220,
+        endFrequency: 680,
+        duration: 0.16,
+        type: "square",
+        volume: 0.055,
+    });
+}
+
+function playFailSound() {
+    playTone({
+        frequency: 180,
+        endFrequency: 42,
+        duration: 0.34,
+        type: "sawtooth",
+        volume: 0.075,
+    });
+}
 
 function resetGame() {
     state.running = false;
@@ -101,6 +234,7 @@ function startGame() {
     if (state.running) return;
 
     state.running = true;
+    startAmbience();
     setOverlay("", "", true);
     lastTime = performance.now();
     animationFrame = requestAnimationFrame(loop);
@@ -181,6 +315,7 @@ function spawnObstacle() {
 function jump() {
     if (!state.running) {
         startGame();
+        playJumpSound();
         return;
     }
 
@@ -188,12 +323,15 @@ function jump() {
 
     state.player.vy = -720;
     state.player.grounded = false;
+    playJumpSound();
 }
 
 function endGame() {
     state.running = false;
     state.gameOver = true;
     cancelAnimationFrame(animationFrame);
+    stopAmbience();
+    playFailSound();
 
     const finalScore = Math.floor(state.score);
     if (finalScore > state.best) {
@@ -537,6 +675,9 @@ resetAvatar.addEventListener("click", () => {
 
 startButton.addEventListener("click", startGame);
 restartButton.addEventListener("click", restartGame);
+soundButton.addEventListener("click", () => {
+    setMuted(!audioState.muted);
+});
 canvas.addEventListener("pointerdown", jump);
 
 document.addEventListener("pointermove", (event) => {

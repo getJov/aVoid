@@ -317,12 +317,18 @@ h2 {
 }
 
 #restartButton,
-#resetAvatar {
+#resetAvatar,
+#soundButton {
     color: var(--text);
     border-color: rgba(143, 163, 184, 0.28);
     background: rgba(17, 25, 35, 0.58);
     box-shadow: none;
     backdrop-filter: blur(8px);
+}
+
+#soundButton[aria-pressed="false"] {
+    color: var(--muted);
+    border-color: rgba(255, 79, 109, 0.35);
 }
 
 #gameHint {
